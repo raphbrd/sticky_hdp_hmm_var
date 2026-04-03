@@ -1,3 +1,5 @@
+*Note:* This is a fork of [this repo](https://github.com/benja263/sticky_hdp_hmm_var).
+
 ## sticky-HDP-HMM-Vector Autoregression
 A python implementation of the sticky-HDP-HMM-VAR model[1].  
 For a fast implementation of stable HMM algorithms[2], some functions were implemented in C++.
@@ -15,12 +17,11 @@ The VAR equation is given by:
 where z(t) is the HMM-state/SLDS-mode at time t and r is the VAR order.
 
 ### Setup
-As part of the code is run in c++, one needs to compile the c++ part.  
-Please run the following commands from within the `utils/math` directory:
-> g++ -std=c++11 -Wall -Wextra -pedantic -c -fPIC c_extensions.cpp -o c_extensions.o  
-> g++ -shared c_extensions.o -o c_extensions.dylib
-
-*Note - the code was tested and compiled with `g++` but will probably work with any other compiler*
+1. Compile the C++ code:
+```bash
+gcc -c -fPIC utils/math/c_extensions.cpp -o utils/math/libc_extensions.o
+gcc -shared -o utils/math/libc_extensions.so utils/math/libc_extensions.o
+```
 
 ## Running the model
 All of the methods needed to run the model are part of a class in `model/sticky_hdp_hmm_var.py`.
