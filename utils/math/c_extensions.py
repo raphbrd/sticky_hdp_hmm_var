@@ -14,14 +14,15 @@ def load_c_lib():
     Load C shared library
     :return:
     """
-    c_lib_path = ctypes.util.find_library(f"{os.path.dirname(os.path.abspath(__file__))}/c_extensions")
+    lib_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "libc_extensions.so"))
+    if not os.path.exists(lib_path):
+        raise FileNotFoundError(f"C library not found at: {lib_path}")
     try:
-        c_lib = ctypes.CDLL(c_lib_path)
-    except OSError:
-        print("Unable to load the requested C library")
-        sys.exit()
+        c_lib = ctypes.CDLL(lib_path)
+    except OSError as e:
+        print("Unable to load C library:", e)
+        sys.exit(1)
     return c_lib
-
 
 def ensure_contiguous(array):
     """
@@ -114,7 +115,8 @@ def backwards_pass(log_beta, log_obs, log_pi_z, c_lib):
     :return:
     """
     log_beta, log_obs, log_pi_z = ensure_contiguous(log_beta), ensure_contiguous(log_obs), ensure_contiguous(log_pi_z)
-    double_ptr_beta, double_ptr_obs, double_ptr_pi_z = np_to_double_ptr(log_beta), np_to_double_ptr(log_obs), np_to_double_ptr(log_pi_z)
+    double_ptr_beta, double_ptr_obs, double_ptr_pi_z = np_to_double_ptr(log_beta), np_to_double_ptr(
+        log_obs), np_to_double_ptr(log_pi_z)
     _ = c_lib.backwards(double_ptr_beta, double_ptr_obs, double_ptr_pi_z, ctypes.c_uint(log_beta.shape[0]),
                         ctypes.c_uint(log_beta.shape[1]))
     return double_ptr_to_np(double_ptr_beta, log_beta.shape)
@@ -143,6 +145,7 @@ def rand_dirichlet(alpha, c_lib):
     """
     alpha = ensure_contiguous(alpha)
     rand_dirichlet_array = np.zeros(alpha.shape)
-    _ = c_lib.rand_dirichlet(rand_dirichlet_array.ctypes.data_as(ctypes.c_void_p), alpha.ctypes.data_as(ctypes.c_void_p),
+    _ = c_lib.rand_dirichlet(rand_dirichlet_array.ctypes.data_as(ctypes.c_void_p),
+                             alpha.ctypes.data_as(ctypes.c_void_p),
                              ctypes.c_uint(len(alpha)))
     return np.ctypeslib.as_array(rand_dirichlet_array, len(alpha))
