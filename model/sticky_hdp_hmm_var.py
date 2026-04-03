@@ -7,9 +7,9 @@ import numpy as np
 from scipy.linalg import inv
 from scipy.stats import invwishart, matrix_normal
 
-from utils.HMM import compute_likelihoods, backwards_messaging, viterbi
-from utils.helpers import normalize_vec
-from utils.math.c_extensions import load_c_lib, rand_gamma, rand_dirichlet, e_array_log
+from ..utils.HMM import compute_likelihoods, backwards_messaging, viterbi
+from ..utils.helpers import normalize_vec
+from ..utils.math.c_extensions import load_c_lib, rand_gamma, rand_dirichlet, e_array_log
 
 
 class StickyHdpHmmVar:

@@ -4,8 +4,8 @@ Module containing HMM related functions
 import numpy as np
 from scipy.linalg import cholesky
 
-from utils.helpers import normalize_vec
-from utils.math.c_extensions import forwards_pass, backwards_pass, e_array_exp
+from .helpers import normalize_vec
+from .math.c_extensions import forwards_pass, backwards_pass, e_array_exp
 
 
 def compute_likelihoods(L, data, theta, log_pi_0, log_pi_z, c_lib):
